@@ -25,9 +25,9 @@ const Login = () => {
             })
         });
 
-        const data = res.json();
+        const data = await res.json();
 
-        if (res.status === 400 || !data) {
+        if (res.status === 422 || !data) {
             window.alert("Invalid Credentials");
         } else {
             dispatch({ type: 'USER', payload: true });
