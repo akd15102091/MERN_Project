@@ -18,6 +18,9 @@ router.post("/register", async (req,res)=>{
     if(!name || !email || !phone || !work || !password || !cpassword){
         res.status(422).json({error : "plz fill the fields properly"}) ;
     }
+    if( password != cpassword){
+        res.status(422).json({error : "plz fill the fields properly"}) ;
+    }
 
     try{
         const userExist = await User.findOne({email:email}) ;
