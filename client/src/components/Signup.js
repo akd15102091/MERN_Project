@@ -37,7 +37,7 @@ const Signup = () => {
         const data = await res.json();
 
         // I need to change the data to res 
-        if (data.status === 422 || !data) {
+        if (res.status === 422 || !data) {
             window.alert("INvalid Registration");
             console.log("INvalid Registration");
         } else {
