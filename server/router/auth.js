@@ -7,9 +7,9 @@ const authenticate = require("../middleware/authenticate");
 require("../db/conn.js") ;
 const User = require("../model/userSchema");
 
-router.get("/", (req,res) => {
-    res.send("Hello World from the server router") ;
-})
+// router.get("/", (req,res) => {
+//     res.send("Hello World from the server router") ;
+// })
 
 
 router.post("/register", async (req,res)=>{
@@ -22,9 +22,9 @@ router.post("/register", async (req,res)=>{
     try{
         const userExist = await User.findOne({email:email}) ;
         if(userExist){
-            return res.status(422).json({error : "Email already exist"}) ;
+             res.status(422).json({error : "Email already exist"}) ;
         }else if(password !== cpassword){
-            return res.status(422).json({error : "Passwords are not  matching"}) ;
+             res.status(422).json({error : "Passwords are not  matching"}) ;
         }
 
         const user = new User({name,email,phone, work, password, cpassword}) ;
@@ -50,11 +50,17 @@ router.post("/signin", async (req,res) => {
         if(!email || !password){
             res.status(422).json({error : "plz fill the fields properly"}) ;
         }
-
+        
         const userLogin = await User.findOne({email:email}) ;
-        // console.log(userLogin) ;
+        console.log(userLogin) ;
         if(userLogin){
             const isMatch = await bcrypt.compare(password, userLogin.password) ;
+
+            if(!isMatch){
+                res.status(422).json({error : "Invalid credentials"}) ;
+           }
+           
+           
             token = await userLogin.generateAuthToken() ;
             console.log(token) ;
         
@@ -63,15 +69,14 @@ router.post("/signin", async (req,res) => {
                 httpOnly:true
             })
 
-            if(!isMatch){
-                return res.json({error : "Invalid credentials"}) ;
-            }
-            else{
-                return res.json({message : "User signin successfully"}) ;
-            }
+
+           
+            
+             res.status(201).json({message : "User signin successfully"}) ;
+            
         }
         else{
-            return res.json({error : "Invalid credentials"}) ;
+             res.status(422).json({error : "Invalid credentials"}) ;
         }
 
         
@@ -91,7 +96,7 @@ router.get('/about', authenticate ,(req, res) => {
 
 // get user data for contact us and home page 
 router.get('/getdata', authenticate, (req, res) => {
-    console.log(`Hello my About`);
+    // console.log(`Hello my About`);
     res.send(req.rootUser);
 });
 
@@ -127,7 +132,7 @@ router.post('/contact', authenticate, async (req, res) => {
 
 // Logout  ka page 
 router.get('/logout', (req, res) => {
-    console.log(`Hello my Logout Page`);
+    // console.log(`Hello my Logout Page`);
     res.clearCookie('jwtoken', { path: '/' });
     res.status(200).send('User lOgout');
 });
